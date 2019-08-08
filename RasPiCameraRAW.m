@@ -5,7 +5,7 @@
 % Saves two temporary image files RAW and 16bit TIFF.
 % Uses external "raspistill" software to capture RAW and custom "dcraw" to 
 % convert raw into TIFF, finally TIFF is loaded into Octave.
-% Assumes that cutom version of "dcraw" which can handle peculiar Raspberry Pi 
+% Assumes that custom version of "dcraw" which can handle peculiar Raspberry Pi 
 % camera RAWs is installes, for more info see Raspberry Pi forum.
 %
 % input:
@@ -17,24 +17,19 @@
 
 function [imOut]=RasPiCameraRAW(fileName,ISOvalue,expTime)
 
-%filename='test';
+
 RAWheader='.jpg';
 IMAGEheader='.tiff';
-%ISOvalue='100';
-%expTime='15000';
-%lineNr=400;
 
-saturatedValue=4603;
-%
-%cutAreaX=[500:1000];
-%cutAreaY=[500:1000];
+saturatedValue=4603; % experimentally found out that saturated values of
+                     % Raspberry Pi camera V2 have byte value of 4603
 
-%command line parameters to run dcraw to convert RAW images,
+% command line parameters to run dcraw to convert RAW images,
 % -D = no Bayer filter removal, -6 = 16-bit output image, 
 % -W = no automatic brightening, -T = output as tiff
 dcrawString='dcraw -D -6 -W -T ';
 
-%command line parameters to capture image with Raspbery Pi camera,
+% command line parameters to capture image with Raspbery Pi camera,
 % -f = full scree preview, -ISO = detector sensitivity, 
 % -ss = exposure time (in micro seconds?), 
 % -awb off = automatic white balance off,
@@ -53,11 +48,13 @@ system([dcrawString,fileName,RAWheader]);
 %
 %% open just converted tiff image file
 im=double(imread([fileName,IMAGEheader]));
-imB =im(1:2:end, 1:2:end);
-imG1=im(1:2:end, 2:2:end);
-imG2=im(2:2:end, 1:2:end);
-imR =im(2:2:end, 2:2:end);
+% break it into color components
+imB =im(1:2:end, 1:2:end);  % blue
+imG1=im(1:2:end, 2:2:end);  % green 1 (two green values because Bayer filter)
+imG2=im(2:2:end, 1:2:end);  % green 2
+imR =im(2:2:end, 2:2:end);  % red
 
+% insert color components into 3D matrix
 imOut(:,:,1)=imR;
 imOut(:,:,2)=imG1;
 imOut(:,:,3)=imG2;

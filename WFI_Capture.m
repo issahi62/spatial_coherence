@@ -11,10 +11,12 @@
 % whichColor: color component of RGB color camera saved 
 %             1 = red, 2 = green1, 3 = gree2, 4 = blue
 % plotImages: 1 = plots monochrome image of saves data (slower), 0 = doesn't plot
+% testmode: 1 = captures only the first image and does not save anything.
+%           0 = normal measurement
 %
 % Saved data file contains variables: 'ICut','I1Cut','I2Cut','IdCut','expTime'
 %
-% For example "WFI_Capture('testFile', 50e3, [1,1640,400,950], 2, 1,0)"
+% For example "WFI_Capture('testFile', 50e3, [1,1640,400,950], 2, 1, 0)"
 % saves data into "testfile.mat" file, exposure time 50 milliseconds, 
 % image area [1,1640,400,950], saves green color component, and plots the image.
 %
@@ -28,9 +30,7 @@ close all
 
 more off
 
-%plotImages=1;
-
-fileName='temppi'
+fileName='temppi';
 ISOvalue=100;
 
 %whichColor=2; %1=R, 2=G,  4=B
@@ -71,7 +71,7 @@ if(testmode==0)
   
   IdCut=Id(yArea,xArea);
   
-    save([saveName,'.mat'],'ICut','I1Cut','I2Cut','IdCut','expTime','-mat-binary')
+  save([saveName,'.mat'],'ICut','I1Cut','I2Cut','IdCut','expTime','-mat-binary')
 end 
 
   ICutPlot=ICut;
