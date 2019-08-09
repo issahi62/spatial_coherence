@@ -72,15 +72,14 @@ for k = 1:length(matFiles)
   Snorm(newI1Cut==0| newI2Cut==0) = 0; 
   % Setting normalized values in the range of -1 to 1 using the find command 
 
-  %% *************************************
+%% *************************************
 % CenterSnorm(find(Snorm<-1)) = -1;
 % CenterSnorm(find(isnan(Snorm))) = 0;
 % CenterSnorm(find(Snorm>1)) = 1;
 %***************************************
-
 %%
- % setting the normalized .mat values to range of -1 to 1
 
+ % setting the normalized .mat values to range of -1 to 1
  Snorm(Snorm<-1)=-1;
  Snorm(isnan(Snorm))=0;
  Snorm(Snorm>1)=1;
@@ -96,6 +95,8 @@ forSnorm = fftshift(fft2(Snorm));
 SizeofSnormal=size(Snorm);
 FI = SizeofSnormal; 
 %%
+%****************************************************
+%USAGE of HILBERT TRANSFORM TO DETERMINE THE COHERENCE PROPERTY OF THE LIGHT SOURCE
 %***********************************************************************
 % envelope of the image of the Snorm values could be used to identify hasField
 % in other to identify the envelope of the image: It has been identified
@@ -167,96 +168,94 @@ phaseofSpatial = angle(InverseFourier);
 
 
 % %%
-% % %Plotting of figures
+ %Plotting of figures
+ 
+ h=figure; 
+
+ %image of one arm opened. 
+subplot(4,2,1)
+imagesc(I1Cut)
+axis equal; axis tight;
+title('(a) $S_{1}(x,y)$', 'Interpreter', 'latex')
+colorbar;
+
+ %image of one arm opened 
+subplot(4,2,2)
+imagesc(I2Cut)
+axis equal; axis tight;
+title('(b) $S_{2}(x,y)$', 'Interpreter', 'latex')
+colorbar;
+ 
+%image of both arms opened
+subplot(4,2,3)
+imagesc(ICut)
+axis equal; axis tight;
+title(' (d) $S(x,y)$', 'Interpreter','latex')
+colorbar;
+ 
+%Subplot for imaging the normalized image(Snorm)
+subplot(4,2,4)
+hold on
+imagesc(Snorm)
+axis equal; axis tight;
+title(' (d) $S_{norm}(x,y)$', 'Interpreter','latex')
+colorbar;
+
+%Subplot for imaging the FourierTransform of the Snorm
+subplot(4,2,5)
+hold on
+I = imagesc(abs(forSnorm));
+[nx,ny,d] = size(I) ;
+[X,Y] = meshgrid(1:ny,1:nx) ;
+hold on
+th = linspace(0,2*pi) ;
+xc = round(px)+r*cos(th); 
+yc = round(py)+r*sin(th); 
+plot(xc,yc,'r') ;
+axis equal; axis tight;
+title(' (e) $FT[S_{norm}(x,y)]$', 'Interpreter','latex')
+colorbar;
+ 
+%subplot for imaging the FTcropped image 
+subplot(4,2,6)
+hold on
+imagesc(abs(Fcenter))
+axis equal; axis tight;
+title(' (f) $FT[S_{norm}(x,y) cropped]$', 'Interpreter','latex')
+colorbar;
 % 
-% 
-% h=figure; 
-% 
-% %image of one arm opened. 
-% subplot(4,2,1)
-% imagesc(I1Cut)
-% axis equal; axis tight;
-% title('(a) $S_{1}(x,y)$', 'Interpreter', 'latex')
-% colorbar;
-% 
-% %image of one arm opened 
-% subplot(4,2,2)
-% imagesc(I2Cut)
-% axis equal; axis tight;
-% title('(b) $S_{2}(x,y)$', 'Interpreter', 'latex')
-% colorbar;
-% 
-% % image of both arms opened
-% subplot(4,2,3)
-% imagesc(ICut)
-% axis equal; axis tight;
-% title(' (d) $S(x,y)$', 'Interpreter','latex')
-% colorbar;
-% 
-% %Subplot for imaging the normalized image(Snorm)
-% subplot(4,2,4)
-% hold on
-% imagesc(Snorm)
-% axis equal; axis tight;
-% title(' (d) $S_{norm}(x,y)$', 'Interpreter','latex')
-% colorbar;
-% 
-% %Subplot for imaging the FourierTransform of the Snorm
-% subplot(4,2,5)
-% hold on
-% I = imagesc(abs(forSnorm));
-% [nx,ny,d] = size(I) ;
-% [X,Y] = meshgrid(1:ny,1:nx) ;
-% hold on
-% th = linspace(0,2*pi) ;
-% xc = round(px)+r*cos(th); 
-% yc = round(py)+r*sin(th); 
-% plot(xc,yc,'r') ;
-% axis equal; axis tight;
-% title(' (e) $FT[S_{norm}(x,y)]$', 'Interpreter','latex')
-% colorbar;
-% 
-% %subplot for imaging the FTcropped image 
-% subplot(4,2,6)
-% hold on
-% imagesc(abs(Fcenter))
-% axis equal; axis tight;
-% title(' (f) $FT[S_{norm}(x,y) cropped]$', 'Interpreter','latex')
-% colorbar;
-% 
-% %subplot for imaging the mcoherence 
-% subplot(4,2,7)
-% hold on
-% imagesc(abs(InverseFourier))
-% axis equal; axis tight;
-% title(' (g) $|\mu(x,y)|$', 'Interpreter','latex')
-% colorbar;
-% 
+%subplot for imaging the mcoherence 
+subplot(4,2,7)
+hold on
+imagesc(abs(InverseFourier))
+axis equal; axis tight;
+title(' (g) $|\mu(x,y)|$', 'Interpreter','latex')
+colorbar;
+ 
 % % subplot for imaging the argumentSnorm 
-% subplot(4,2,8)
-% hold on
-% imagesc(abs(phaseofSpatial))
-% axis equal; axis tight;
-% title(' (h) $arg[\mu(x,y)]$', 'Interpreter','latex')
-% colorbar;
-% % %%
-% %saving images for each loop 
-% fname = '/Users/kobbyTilly/Desktop/Msc(UEF)_Biophotonics/Third_Period/LAB2/NewLab2/Spatial_coherence_IMS/Images';
-% saveas(h,fullfile(fname, sprintf('FIG%d.png',k)));
-% saveas(h,fullfile(fname, sprintf('FIG%d.eps',k)));
-% %%
+subplot(4,2,8)
+hold on
+imagesc(abs(phaseofSpatial))
+axis equal; axis tight;
+title(' (h) $arg[\mu(x,y)]$', 'Interpreter','latex')
+colorbar;
+
+%saving images for each loop 
+fname = '/Users/kobbyTilly/Desktop/Msc(UEF)_Biophotonics/Third_Period/LAB2/NewLab2/Spatial_coherence_IMS/Images';%put your storage_path
+saveas(h,fullfile(fname, sprintf('FIG%d.png',k)));
+saveas(h,fullfile(fname, sprintf('FIG%d.eps',k)));
 % % Section for the mouse Clicking
-% 
-% % disp('The first Analysis is done: Do you want to continue to the Next one: ');
-% %         keydown = waitforbuttonpress;
-% %         if (keydown == 0)
-% %             disp('Mouse button was pressed');
-% %         else
-% %             disp('Key was pressed');
-% %         end
-% %         close(h);
-% %
-%  close all; 
+
+disp('The first Analysis is done: Do you want to continue to the Next one: ');
+        keydown = waitforbuttonpress;
+        if (keydown == 0)
+           disp('Mouse button was pressed');
+        else
+           disp('Key was pressed');
+         end
+        close(h);
+
+close all
 end
 
  
